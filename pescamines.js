@@ -1,8 +1,21 @@
 function iniciarPartida(){
+    resetGame();
+
     let files = comprova10i30(parseInt(prompt("Introdueix el nombre de files")));
     let columnes = comprova10i30(parseInt(prompt("Introdueix el nombre de columnes")));
+    let taulell = document.getElementById("taulell");
 
-    crearTaulell(files, columnes);
+    if(taulell.children.length === 0){
+        crearTaulell(files, columnes);
+    }
+
+    setMines();
+
+    calculaAdjacents();
+
+
+
+
 
 }
 
@@ -14,38 +27,74 @@ function crearTaulell(files, columnes){
         for(let j = 0; j < columnes; j++){
             let columna = document.createElement("td");
             columna.innerHTML = "<img src='img/fons20px.jpg' alt='Casella'/>";
-            columna.setAttribute("id", i + "-" + j);
-            columna.setAttribute("onclick", "prova()");
+            let id = i + "-" + j;
+            columna.setAttribute("id", id);
+            columna.setAttribute("onclick", `obreCasella(${id})`);
+            columna.setAttribute("data-mina", "false");
             fila.appendChild(columna);
         }
         tauler.appendChild(fila);
     }
 }
 
-function prova(){
-    console.log("hola");
+
+function obreCasella(coordenada){
 }
 
 
 
+function setMines(){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
+    let mines = Math.floor((files * columnes) / 5.88);
 
+    for(let i = 0; i < mines; i++){
+        let fila = Math.floor(Math.random() * files);
+        let columna = Math.floor(Math.random() * columnes);
 
+        let casella = document.getElementById(fila + "-" + columna);
+        casella.setAttribute("data-mina", "true");
+    }
+}
 
+function calculaAdjacents(){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
 
+    for(let i = 0; i < files; i++){
+        for(let j = 0; j < columnes; j++){
+            let casella = document.getElementById(i + "-" + j);
+            if(casella.getAttribute("data-mina") === "false"){
+                let adjacents = 0;
+                for(let k = i - 1; k <= i + 1; k++){
+                    for(let l = j - 1; l <= j + 1; l++){
+                        if(k >= 0 && k < files && l >= 0 && l < columnes){
+                            let adjacent = document.getElementById(k + "-" + l);
+                            if(adjacent.getAttribute("data-mina") === "true"){
+                                adjacents++;
+                            }
+                        }
+                    }
+                }
+                casella.setAttribute("data-num-mines", adjacents);
+            }
+        }
+    }
+}
 
+function esMina(xy){
+    let casella = document.getElementById(xy);
 
+    if(casella.getAttribute("data-mina") === false) {
+        return false;
+    }
 
+    return true;
+}
 
-
-
-
-
-
-
-
-
-
-
+function resetGame(){
+    document.getElementById("taulell").innerHTML = "";
+}
 
 function comprova10i30(valor){
     if(valor < 10) {
