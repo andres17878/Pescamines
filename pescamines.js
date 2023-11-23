@@ -39,6 +39,17 @@ function crearTaulell(files, columnes){
 
 
 function obreCasella(coordenada){
+    let casella = document.getElementById(coordenada);
+    let mina = casella.getAttribute("data-mina");
+    let numMines = casella.getAttribute("data-num-mines");
+
+    if(mina === "true"){
+        casella.innerHTML = "<img src='img/mina20px.jpg' alt='Mina'/>";
+        alert("Has perdut");
+    } else {
+        casella.innerHTML = "<img src='img/" + numMines + "20px.jpg' alt='Casella'/>";
+    }
+
 }
 
 
@@ -63,20 +74,20 @@ function calculaAdjacents(){
 
     for(let i = 0; i < files; i++){
         for(let j = 0; j < columnes; j++){
-            let casella = document.getElementById(i + "-" + j);
-            if(casella.getAttribute("data-mina") === "false"){
+            let id = i + "-" + j;
+            if(!esMina(id)){
                 let adjacents = 0;
                 for(let k = i - 1; k <= i + 1; k++){
                     for(let l = j - 1; l <= j + 1; l++){
                         if(k >= 0 && k < files && l >= 0 && l < columnes){
-                            let adjacent = document.getElementById(k + "-" + l);
-                            if(adjacent.getAttribute("data-mina") === "true"){
+                            let idAdjacent = k + "-" + l;
+                            if(esMina(idAdjacent)){
                                 adjacents++;
                             }
                         }
                     }
                 }
-                casella.setAttribute("data-num-mines", adjacents);
+                setMinesAdjacents(id, adjacents);
             }
         }
     }
@@ -85,11 +96,16 @@ function calculaAdjacents(){
 function esMina(xy){
     let casella = document.getElementById(xy);
 
-    if(casella.getAttribute("data-mina") === false) {
+    if(casella.getAttribute("data-mina") === 'false') {
         return false;
     }
 
     return true;
+}
+
+function setMinesAdjacents(xy, nMines){
+    let casella = document.getElementById(xy);
+    casella.setAttribute("data-num-mines", nMines);
 }
 
 function resetGame(){
