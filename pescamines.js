@@ -13,10 +13,6 @@ function iniciarPartida(){
 
     calculaAdjacents();
 
-
-
-
-
 }
 
 function crearTaulell(files, columnes){
@@ -29,7 +25,7 @@ function crearTaulell(files, columnes){
             columna.innerHTML = "<img src='img/fons20px.jpg' alt='Casella'/>";
             let id = i + "-" + j;
             columna.setAttribute("id", id);
-            columna.setAttribute("onclick", `obreCasella(${id})`);
+            columna.setAttribute("onclick", `obreCasella('${id}')`);
             columna.setAttribute("data-mina", "false");
             fila.appendChild(columna);
         }
@@ -40,17 +36,44 @@ function crearTaulell(files, columnes){
 
 function obreCasella(coordenada){
     let casella = document.getElementById(coordenada);
-    let mina = casella.getAttribute("data-mina");
-    let numMines = casella.getAttribute("data-num-mines");
 
-    if(mina === "true"){
+    if(casella.getAttribute("data-mina") === "true"){
         casella.innerHTML = "<img src='img/mina20px.jpg' alt='Mina'/>";
-        alert("Has perdut");
-    } else {
-        casella.innerHTML = "<img src='img/" + numMines + "20px.jpg' alt='Casella'/>";
+        alert("Has perdut!");
+    } 
+
+    if(casella.getAttribute("data-mina") === "false"){
+        casella.setAttribute("data-mina", "");
+        casella.setAttribute("onclick", "");
+        comprovaVictoria();
+        |
     }
 
+
+
+
+
 }
+
+function comprovaVictoria(){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
+    
+    for(let i = 0; i < files; i++){
+        for(let j = 0; j < columnes; j++){
+            let id = i + "-" + j;
+            let casella = document.getElementById(id);
+            if(casella.getAttribute("data-mina") === "false"){
+                return;
+            } 
+        }
+    }
+    alert("Has guanyat!");
+}
+
+
+
+
 
 
 
