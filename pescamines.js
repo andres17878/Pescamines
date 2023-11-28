@@ -33,26 +33,38 @@ function crearTaulell(files, columnes){
     }
 }
 
+function desactivaTaulell(){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
+    
+    for(let i = 0; i < files; i++){
+        for(let j = 0; j < columnes; j++){
+            let id = i + "-" + j;
+            let casella = document.getElementById(id);
+            casella.setAttribute("onclick", "");
+        }
+    }
+}
 
 function obreCasella(coordenada){
     let casella = document.getElementById(coordenada);
 
     if(casella.getAttribute("data-mina") === "true"){
         casella.innerHTML = "<img src='img/mina20px.jpg' alt='Mina'/>";
+        desactivaTaulell();
         alert("Has perdut!");
     } 
 
     if(casella.getAttribute("data-mina") === "false"){
         casella.setAttribute("data-mina", "");
         casella.setAttribute("onclick", "");
+        casella.innerHTML = "<style.backgroundImage = 'none'></style>";
+        let numMines = casella.getAttribute("data-num-mines");
+        if(numMines != 0){
+            casella.innerHTML = numMines;
+        }
         comprovaVictoria();
-        |
     }
-
-
-
-
-
 }
 
 function comprovaVictoria(){
@@ -68,6 +80,7 @@ function comprovaVictoria(){
             } 
         }
     }
+    desactivaTaulell();
     alert("Has guanyat!");
 }
 
