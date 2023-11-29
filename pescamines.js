@@ -27,6 +27,7 @@ function crearTaulell(files, columnes){
             columna.setAttribute("id", id);
             columna.setAttribute("onclick", `obreCasella('${id}')`);
             columna.setAttribute("data-mina", "false");
+            columna.setAttribute("class", "clicD");
             fila.appendChild(columna);
         }
         tauler.appendChild(fila);
@@ -46,16 +47,64 @@ function desactivaTaulell(){
     }
 }
 
+function obreCasellesSenseMines(id){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
+    let fila = parseInt(id.split("-")[0]);
+    let columna = parseInt(id.split("-")[1]);
+
+    for(let i = fila - 1; i <= fila + 1; i++){
+        for(let j = columna - 1; j <= columna + 1; j++){
+            if(i >= 0 && i < files && j >= 0 && j < columnes){
+                let idAdjacent = i + "-" + j;
+                let casella = document.getElementById(idAdjacent);
+                if(casella.getAttribute("data-mina") === "false" && casella.getAttribute("data-num-mines") === "0"){
+                    casella.setAttribute("data-mina", "");
+                    casella.setAttribute("onclick", "");
+                    casella.innerHTML = "<style.backgroundImage = 'none'></style>";
+                    obreCasellesSenseMines(idAdjacent);
+                }
+                if(casella.getAttribute("data-mina") === "false" && casella.getAttribute("data-num-mines") != "0"){
+                    casella.setAttribute("data-mina", "");
+                    casella.setAttribute("onclick", "");
+                    casella.innerHTML = "<style.backgroundImage = 'none'></style>";
+                    let numMines = casella.getAttribute("data-num-mines");
+                    casella.innerHTML = numMines;
+                }
+            }
+        }
+    }
+}
+
+function mostraTotesLesMines(){
+    let files = document.getElementById("taulell").children.length;
+    let columnes = document.getElementById("taulell").children[0].children.length;
+    
+    for(let i = 0; i < files; i++){
+        for(let j = 0; j < columnes; j++){
+            let id = i + "-" + j;
+            let casella = document.getElementById(id);
+            if(casella.getAttribute("data-mina") === "true"){
+                casella.innerHTML = "<img src='img/mina20px.jpg' alt='Mina'/>";
+            } 
+        }
+    }
+}
+
 function obreCasella(coordenada){
     let casella = document.getElementById(coordenada);
 
     if(casella.getAttribute("data-mina") === "true"){
         casella.innerHTML = "<img src='img/mina20px.jpg' alt='Mina'/>";
+        mostraTotesLesMines();
         desactivaTaulell();
-        alert("Has perdut!");
+        setTimeout(function(){ alert("Has perdut!"); }, 500);
     } 
 
     if(casella.getAttribute("data-mina") === "false"){
+        if(casella.getAttribute("data-num-mines") === "0"){
+            obreCasellesSenseMines(coordenada);
+        }
         casella.setAttribute("data-mina", "");
         casella.setAttribute("onclick", "");
         casella.innerHTML = "<style.backgroundImage = 'none'></style>";
@@ -83,12 +132,6 @@ function comprovaVictoria(){
     desactivaTaulell();
     alert("Has guanyat!");
 }
-
-
-
-
-
-
 
 function setMines(){
     let files = document.getElementById("taulell").children.length;
