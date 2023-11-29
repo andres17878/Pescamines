@@ -1,3 +1,10 @@
+// Cuando se presiona el botón de iniciar partida ocurre lo siguiente:
+// Se resetea el tablero
+// Se piden las filas y columnas
+// Se crea el tablero
+// Se ponen las minas
+// Se calculan los números de minas adyacentes
+// Se activa el clic derecho (para poner banderas)
 function iniciarPartida(){
     resetGame();
 
@@ -13,8 +20,17 @@ function iniciarPartida(){
 
     calculaAdjacents();
 
+    clicD();
+
 }
 
+// Al crear el tablero se crean las filas y las columnas
+// Se crea una casilla por cada fila y columna
+// Se le asigna un id a cada casilla
+// Se le asigna un evento onclick a cada casilla
+// Se le asigna un atributo data-mina a cada casilla
+// Se le asigna un atributo class a cada casilla
+// Se le asigna un atributo data-num-mines a cada casilla
 function crearTaulell(files, columnes){
     let tauler = document.getElementById("taulell");
 
@@ -34,6 +50,7 @@ function crearTaulell(files, columnes){
     }
 }
 
+// Esta función desactiva el evento onclick de todas las casillas
 function desactivaTaulell(){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -47,6 +64,7 @@ function desactivaTaulell(){
     }
 }
 
+// Esta función abre las casillas que no tienen minas alrededor recursivamente pasandole el id de la casilla
 function obreCasellesSenseMines(id){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -76,6 +94,8 @@ function obreCasellesSenseMines(id){
     }
 }
 
+
+// Esta función muestra todas las minas cuando se pierde la partida
 function mostraTotesLesMines(){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -91,6 +111,9 @@ function mostraTotesLesMines(){
     }
 }
 
+
+// Esta función abre la casilla clicada, si es una mina se pierde la partida
+// Si no es una mina se abre la casilla y se comprueba si se ha ganado la partida
 function obreCasella(coordenada){
     let casella = document.getElementById(coordenada);
 
@@ -116,6 +139,11 @@ function obreCasella(coordenada){
     }
 }
 
+// Esta función comprueba si se ha ganado la partida, funciona de la siguiente manera:
+// Se recorren todas las casillas del tablero
+// Si una casilla no es una mina se sale de la función
+// Si se recorren todas las casillas y no se ha encontrado alguna casilla que no sea una mina se ha ganado la partida
+// Además se desactiva el tablero y se muestra un mensaje de victoria en caso de ganar
 function comprovaVictoria(){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -133,6 +161,11 @@ function comprovaVictoria(){
     alert("Has guanyat!");
 }
 
+
+// Esta función pone las minas en el tablero
+// Se calcula el número de minas que se van a poner en función del tamaño del tablero
+// Se calcula una posición aleatoria para cada mina
+// Se le asigna un atributo data-mina a cada casilla que tenga una mina
 function setMines(){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -147,6 +180,11 @@ function setMines(){
     }
 }
 
+
+// Esta función calcula el número de minas adyacentes a cada casilla
+// Se recorren todas las casillas del tablero
+// Si una casilla no es una mina se calcula el número de minas adyacentes
+// Se le asigna un atributo data-num-mines a cada casilla que no sea una mina
 function calculaAdjacents(){
     let files = document.getElementById("taulell").children.length;
     let columnes = document.getElementById("taulell").children[0].children.length;
@@ -172,6 +210,8 @@ function calculaAdjacents(){
     }
 }
 
+
+// Esta función comprueba si una casilla es una mina
 function esMina(xy){
     let casella = document.getElementById(xy);
 
@@ -182,15 +222,19 @@ function esMina(xy){
     return true;
 }
 
+// Esta función asigna el número de minas adyacentes a una casilla
 function setMinesAdjacents(xy, nMines){
     let casella = document.getElementById(xy);
     casella.setAttribute("data-num-mines", nMines);
 }
 
+// Esta función resetea el tablero
 function resetGame(){
     document.getElementById("taulell").innerHTML = "";
 }
 
+
+// Esta función comprueba que el valor introducido esté entre 10 y 30 y si no lo está lo pone a 10 o 30
 function comprova10i30(valor){
     if(valor < 10) {
         valor = 10;
@@ -201,4 +245,26 @@ function comprova10i30(valor){
     }
 
     return valor;
+}
+
+
+// Esta función es para poner banderas
+// Se activa con el botón derecho del ratón
+// Además se desactiva el menú contextual
+// Cuando se hace clic derecho encima de una casilla se pone una bandera, si ya hay una bandera se quita
+function clicD(){
+    let caselles = document.querySelectorAll(".clicD");
+
+    caselles.forEach(casella => {
+        casella.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+            if(casella.getAttribute("class") === "clicD" && casella.getAttribute("onclick") != ""){
+                casella.setAttribute("class", "clicD2");
+                casella.innerHTML = "<img src='img/badera20px.jpg' alt='Bandera'/>";
+            } else if(casella.getAttribute("class") === "clicD2" && casella.getAttribute("onclick") != ""){
+                casella.setAttribute("class", "clicD");
+                casella.innerHTML = "<img src='img/fons20px.jpg' alt='Casella'/>";
+            }
+        });
+    });
 }
